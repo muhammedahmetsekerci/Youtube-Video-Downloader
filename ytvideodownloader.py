@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import time
+from urllib.parse import urlparse
+import os
 
 data1 = ""
 data2 = ""
@@ -14,11 +16,25 @@ ws.geometry("400x210")
 ws.eval('tk::PlaceWindow . center')
 ws.resizable(False, False)
 
-def step():
-    for i in range(10):
+
+def is_valid_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+
+def is_valid_file_path(file_path):
+    try:
+        return os.path.exists(file_path)
+    except Exception:
+        return False
+
+#progressbar
+def step(a):
+    for i in range(a):
         ws.update_idletasks()
         progress['value'] += 10
-        
         time.sleep(0.1)
 
 def clear_entry():
@@ -32,10 +48,10 @@ def dataSet():
     data1 = yturl.get()
     data2 = filepath.get()
 
-resolution_label = Label(ws, text="Çözünürlük Seç:")
+resolution_label = Label(ws, text="resolution")
 resolution_label.pack()
 
-# Çözünürlük seçenekleri
+#resolution options
 resolutions = ["720p", "480p", "360p"]
 
 resolution_var = StringVar()
@@ -68,28 +84,39 @@ def ytdownloader():
     if selected_resolution == " ":
         messagebox.showerror(message="please choose resolution")
         return
+    if not data1 or not data2:
+        messagebox.showerror("Error", "URL and file path fields must be filled.")
+        return
+    
+    if not is_valid_url(data1):
+        messagebox.showerror("Error", "Invalid URL. Please enter a correct YouTube URL.")
+        return
+    
+    if not is_valid_file_path(data2):
+        messagebox.showerror("Error", "Invalid file path. Please enter a valid file path.")
+        return
     
     while not HasItBeenDownloaded:
         try:
-            print("Başlatılıyor...")
             yt = YouTube(data1)
-            print("Video Bulundu")
-             # Çözünürlüğe göre uygun akışı al
+            #print("video found")
+            step(3)
+             #Select appropriate stream based on resolution
             if selected_resolution == "720p":
                 ys = yt.streams.get_by_resolution("720p")
             elif selected_resolution == "480p":
                 ys = yt.streams.get_by_resolution("480p")
             elif selected_resolution == "360p":
                 ys = yt.streams.get_by_resolution("360p")
-            
+            step(3)
             #Download video
             ys.download(data2)
-            step()
-            messagebox.showinfo(" ",message="Video indirildi")
+            step(4)
+            messagebox.showinfo(" ",message="Video downloaded")
             clear_entry()
             return
         except Exception as e:
-            messagebox.showerror(" ",message="file path or youtube link is incorrect.")
+            messagebox.showerror(" ",message="error, check data again")
             return 
         
 button1=Button(ws,text="Download",command=ytdownloader)
