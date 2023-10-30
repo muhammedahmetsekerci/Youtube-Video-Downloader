@@ -16,6 +16,21 @@ ws.geometry("400x210")
 ws.eval('tk::PlaceWindow . center')
 ws.resizable(False, False)
 
+def generate_unique_filename(yt):
+    #Generate a unique filename from URL or title
+    video_title = ''.join(e for e in yt.title if e.isalnum())
+    file_extension = yt.streams.get_highest_resolution().mime_type.split("/")[-1]
+    
+    return f"{video_title}.{file_extension}"
+
+def get_available_filename(full_path):
+    #If the file already exists, add a unique number to the end of the file name
+    base, ext = os.path.splitext(full_path)
+    i = 1
+    while os.path.exists(full_path):
+        full_path = f"{base}_{i}{ext}"
+        i += 1
+    return full_path
 
 def is_valid_url(url):
     try:
@@ -40,7 +55,9 @@ def step(a):
 def clear_entry():
     yturl.delete(0, 'end')
     filepath.delete(0,'end')
-    progress.step(0)
+    
+def clear_progress_bar():
+    progress['value'] = 0
 
 
 def dataSet():
@@ -52,7 +69,7 @@ resolution_label = Label(ws, text="resolution")
 resolution_label.pack()
 
 #resolution options
-resolutions = ["720p", "480p", "360p"]
+resolutions = ["720p", "480p", "360p", "240p"]
 
 resolution_var = StringVar()
 resolution_var.set(" ")
@@ -99,24 +116,35 @@ def ytdownloader():
     while not HasItBeenDownloaded:
         try:
             yt = YouTube(data1)
-            #print("video found")
             step(3)
-             #Select appropriate stream based on resolution
+            unique_filename = generate_unique_filename(yt)
+            full_path = os.path.join(data2, unique_filename)
+            #print("video found")
+            #Select appropriate stream based on resolution
             if selected_resolution == "720p":
                 ys = yt.streams.get_by_resolution("720p")
             elif selected_resolution == "480p":
                 ys = yt.streams.get_by_resolution("480p")
             elif selected_resolution == "360p":
                 ys = yt.streams.get_by_resolution("360p")
-            step(3)
+            elif selected_resolution == "240p":
+                ys = yt.streams.get_by_resolution("240p")
+            step(2)    
+                 #Check the directory of downloaded videos
+            if os.path.isfile(full_path):
+                #If the file exists, create a unique name
+                full_path = get_available_filename(full_path)
+            step(2)
             #Download video
-            ys.download(data2)
-            step(4)
+            ys.download(data2, filename=os.path.basename(full_path))
+            step(3)
             messagebox.showinfo(" ",message="Video downloaded")
             clear_entry()
+            clear_progress_bar()
             return
         except Exception as e:
-            messagebox.showerror(" ",message="error, check data again")
+            messagebox.showerror(" ",message="error, check data again")            
+            clear_progress_bar()
             return 
         
 button1=Button(ws,text="Download",command=ytdownloader)
