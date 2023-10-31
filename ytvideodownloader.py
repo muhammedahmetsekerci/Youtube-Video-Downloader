@@ -123,12 +123,8 @@ def ytdownloader():
             #Select appropriate stream based on resolution
             if selected_resolution == "720p":
                 ys = yt.streams.get_by_resolution("720p")
-            #elif selected_resolution == "480p":
-                #ys = yt.streams.get_by_resolution("480p")
             elif selected_resolution == "360p":
                 ys = yt.streams.get_by_resolution("360p")
-           #elif selected_resolution == "240p":
-                #ys = yt.streams.get_by_resolution("240p")
             step(2)    
                  #Check the directory of downloaded videos
             if os.path.isfile(full_path):
@@ -143,7 +139,7 @@ def ytdownloader():
             clear_progress_bar()
             return
         except Exception as e:
-            messagebox.showerror(" ",message="error, check data again")            
+            messagebox.showerror(" ",message="Error, check data again or check your internet connection")            
             clear_progress_bar()
             return 
         
