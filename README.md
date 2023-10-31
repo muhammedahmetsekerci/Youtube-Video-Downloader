@@ -20,6 +20,6 @@ The following Python libraries and modules were used in this project:
 4. Select the video resolution from the "resolution" option (for example, 720p or 360p).
 5. Start the download process by clicking the "Download" button.
 
-## Lisans
+## Licence
 
 This project is licensed under the MIT License. Refer to [LICENSE] for more information.
