@@ -3,8 +3,8 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import time
-from urllib.parse import urlparse
 import os
+from urllib.parse import urlparse
 
 data1 = ""
 data2 = ""
@@ -69,7 +69,7 @@ resolution_label = Label(ws, text="resolution")
 resolution_label.pack()
 
 #resolution options
-resolutions = ["720p", "480p", "360p", "240p"]
+resolutions = ["720p", "360p"]
 
 resolution_var = StringVar()
 resolution_var.set(" ")
@@ -123,12 +123,12 @@ def ytdownloader():
             #Select appropriate stream based on resolution
             if selected_resolution == "720p":
                 ys = yt.streams.get_by_resolution("720p")
-            elif selected_resolution == "480p":
-                ys = yt.streams.get_by_resolution("480p")
+            #elif selected_resolution == "480p":
+                #ys = yt.streams.get_by_resolution("480p")
             elif selected_resolution == "360p":
                 ys = yt.streams.get_by_resolution("360p")
-            elif selected_resolution == "240p":
-                ys = yt.streams.get_by_resolution("240p")
+           #elif selected_resolution == "240p":
+                #ys = yt.streams.get_by_resolution("240p")
             step(2)    
                  #Check the directory of downloaded videos
             if os.path.isfile(full_path):
